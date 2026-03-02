@@ -1,4 +1,5 @@
 export interface Reward {
   name: string;
-  effect: () => void;
+  params: any;
+  effect?: () => void;
 }

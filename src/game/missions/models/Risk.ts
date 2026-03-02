@@ -5,6 +5,6 @@ export type RiskName = (typeof riskNames)[number];
 export interface RiskInfo {
   name: RiskName;
   probability: number;
-  level: number;
+  rank: number;
   effect: () => void;
 }

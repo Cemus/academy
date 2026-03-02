@@ -1,28 +1,145 @@
-import type { Mission } from "../models/Mission";
+import { Rank } from "../../characters/models/Character";
+import type { Condition } from "../models/Condition";
+import { MissionType, type Mission } from "../models/Mission";
+import type { Reward } from "../models/Reward";
+import type { RiskInfo, RiskName } from "../models/Risk";
 import RiskFactory from "./RiskFactory";
 
+type MissionTemplate = {
+  names: string[];
+  risks: RiskName[];
+};
+
+const rewardTypes: Record<Rank, string[]> = {
+  [Rank.E]: ["reputation", "gold"],
+  [Rank.D]: ["reputation", "gold", "item"],
+  [Rank.C]: ["reputation", "gold", "item"],
+  [Rank.B]: ["reputation", "rare item", "gold"],
+  [Rank.A]: ["reputation", "legendary item", "gold"],
+};
+
+const missionCatalog: Record<MissionType, MissionTemplate> = {
+  patrol: {
+    names: ["Easy Patrol", "Village Watch", "Border Patrol"],
+    risks: ["bandits"],
+  },
+
+  scout: {
+    names: ["Scout Area", "Deep Recon"],
+    risks: ["trap", "wild_magic"],
+  },
+
+  assault: {
+    names: ["Bandit Camp Raid", "Fort Assault"],
+    risks: ["wild_magic"],
+  },
+
+  delivery: {
+    names: ["Supply Run", "Find Item"],
+    risks: ["bandits"],
+  },
+
+  escort: {
+    names: ["Merchant Escort", "Guard Caravan"],
+    risks: ["bandits", "trap"],
+  },
+};
+
 export default class MissionFactory {
-  static createMission(rank = 1): Mission {
+  static createMission(rank?: Rank): Mission {
+    if (!rank) {
+      rank = this.getRandomRank();
+    }
+
+    const type = this.getRandomMissionType();
+
+    const template: MissionTemplate = missionCatalog[type];
+
+    const name =
+      template.names[Math.floor(Math.random() * template.names.length)];
+
+    const risks = template.risks.map((risk) =>
+      RiskFactory.createRisk({
+        name: risk,
+        rank: rank,
+      }),
+    );
+
+    const conditions = this.getRandomConditions(type, rank);
+    const rewards: Reward[] = this.getRandomRewards(type, rank);
+
     return {
-      name: "Mission test",
-      expiresIn: 2,
-      duration: 3,
-      risks: [RiskFactory.createRisk({ level: rank })],
-      conditions: [
-        {
-          type: "minRank",
-          params: "E",
-        },
-      ],
-      rewards: [
-        {
-          name: "reputation",
-          effect: function (): void {
-            throw new Error("Function not implemented.");
-          },
-        },
-      ],
+      name,
+      expiresIn: 1 + Math.floor(Math.random() * 5),
+      duration: 1 + Math.floor(Math.random() * 3),
+      type: type,
+      description: "",
+      risks,
+      conditions,
+      rewards,
       expired: false,
     };
+  }
+
+  static getRandomMissionType(): MissionType {
+    const values = Object.values(MissionType);
+    return values[Math.floor(Math.random() * values.length)];
+  }
+
+  static getRandomRank(): Rank {
+    return Math.floor(Math.random() * (Object.values(Rank).length - 1) + 1);
+  }
+
+  static getRandomConditions(type: MissionType, rank: Rank): Condition[] {
+    const conditions: Condition[] = [];
+
+    conditions.push({ type: "minRank", params: { value: Rank[rank] } });
+
+    if (Math.random() > 0.9) {
+      conditions.push({ type: "maxRank", params: { value: Rank[rank] } });
+    }
+
+    switch (type) {
+      case MissionType.assault:
+        break;
+    }
+
+    return conditions;
+  }
+
+  static getRandomRewards(type: MissionType, rank: Rank): Reward[] {
+    const rewards: Reward[] = [];
+
+    const rewardNames = rewardTypes[rank];
+
+    rewardNames.forEach((rewardName) => {
+      switch (rewardName) {
+        case "reputation":
+          {
+            const min = 5 * rank * 0.75;
+            const max = 5 * rank * 1.25;
+
+            rewards.push({
+              name: "reputation",
+              params: { value: Math.floor(Math.random() * (max - min) + min) },
+            });
+          }
+          break;
+
+        case "gold":
+          {
+            const min = rank * 10 * Math.exp(Math.sqrt(rank)) * 0.75;
+            const max = rank * 10 * Math.exp(Math.sqrt(rank)) * 1.25;
+
+            rewards.push({
+              name: "gold",
+              params: { value: Math.floor(Math.random() * (max - min) + min) },
+            });
+          }
+          break;
+      }
+    });
+
+    return rewards;
   }
 }

@@ -1,9 +1,9 @@
+import type { Rank } from "../../characters/models/Character";
 import { type RiskName, type RiskInfo, riskNames } from "../models/Risk";
 
 interface CreateRiskOptions {
   name?: RiskName;
-  level?: number;
-  probability?: number;
+  rank?: number;
 }
 
 export default class RiskFactory {
@@ -13,34 +13,47 @@ export default class RiskFactory {
   }
   static createRisk({
     name = this.getRandomRiskName(),
-    level = Math.floor(Math.random() * (10 - 1) + 1),
-    probability = 5,
+    rank = Math.floor(Math.random() * (10 - 1) + 1),
   }: CreateRiskOptions = {}): RiskInfo {
+    const probability = this.probabilityFromRank(rank);
+
     switch (name) {
       case "bandits":
         return {
           name,
-          probability: probability * level,
-          level,
+          probability: probability,
+          rank,
           effect: () => {
-            console.log(`${level} bandits attack the team!`);
+            console.log(`${rank} bandits attack the team!`);
           },
         };
       case "trap":
         return {
           name,
-          probability: probability * level,
-          level,
-          effect: () => console.log(`A level ${level} trap triggers!`),
+          probability: probability,
+          rank,
+          effect: () => console.log(`A rank ${rank} trap triggers!`),
         };
       case "wild_magic":
         return {
           name,
-          probability: probability * level,
-          level,
+          probability: probability,
+          rank,
           effect: () =>
-            console.log(`A magical instability level ${level} strikes!`),
+            console.log(`A magical instability rank ${rank} strikes!`),
         };
     }
+  }
+
+  static probabilityFromRank(rank: number) {
+    const min = 5;
+    const max = 100;
+
+    const normalized = (rank - 1) / 4;
+    const base = min + (max - min) * normalized;
+
+    const variance = base * 0.5;
+    const value = base + (Math.random() + Math.random() - 1) * variance;
+    return Math.round(Math.min(Math.max(value, 1), 100));
   }
 }

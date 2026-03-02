@@ -18,23 +18,63 @@
 
 <main>
   <h3>Mission board</h3>
-  <ul>
+  <div class="missions-container">
     {#each $game.missionBoard.missions as mission}
-      <Mission {mission} />
+      <Mission {mission} {game} />
     {/each}
-  </ul>
+  </div>
 
-  <button type="button" class="button-return" onclick={() => toMainMenu()}
-    >Back</button
-  >
+  <button type="button" class="button-return" onclick={() => toMainMenu()}>
+    Back
+  </button>
 </main>
 
 <style>
   main {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    flex: 1;
     align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .missions-container {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scroll-behavior: smooth;
+    width: 100%;
+    user-select: none;
+  }
+
+  .missions-container::-webkit-scrollbar {
+    height: 12px;
+  }
+
+  .missions-container::-webkit-scrollbar:hover {
+    height: 12px;
+  }
+
+  .missions-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .missions-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+  }
+
+  .missions-container::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  @media (max-width: 500px) {
+    .missions-container {
+      flex-direction: column;
+    }
   }
 </style>
