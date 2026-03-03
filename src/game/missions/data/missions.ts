@@ -1,4 +1,4 @@
-import { Rank } from "../../characters/models/Character";
+import { Rank } from "../../characters/models/Rank";
 import MissionFactory from "../factories/MissionFactory";
 import type { Mission } from "../models/Mission";
 

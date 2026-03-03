@@ -1,8 +1,8 @@
-import { Rank } from "../../characters/models/Character";
+import { Rank } from "../../characters/models/Rank";
 import type { Condition } from "../models/Condition";
 import { MissionType, type Mission } from "../models/Mission";
 import type { Reward } from "../models/Reward";
-import type { RiskInfo, RiskName } from "../models/Risk";
+import type { RiskName } from "../models/Risk";
 import RiskFactory from "./RiskFactory";
 
 type MissionTemplate = {
