@@ -1,4 +1,7 @@
-import type { Character, Stats, Trait } from "../characters/models/Character";
+import type { Character } from "../models/Character";
+import { Rank } from "../models/Rank";
+import Stats from "../models/Stats";
+import type { Trait } from "../models/Trait";
 
 export default class CharacterFactory {
   private static prefixes = [
@@ -32,15 +35,10 @@ export default class CharacterFactory {
       name: this.generateRandomName(),
       surname: this.generateRandomName(),
       role: "student",
-      rank: "E",
-      stats: this.generateBaseStats(),
+      rank: Rank["E"],
+      stats: new Stats(),
       traits: this.generateInitialTraits(),
-    };
-  }
-
-  static generateBaseStats(): Stats {
-    return {
-      str: 1,
+      isOnMission: false,
     };
   }
 
