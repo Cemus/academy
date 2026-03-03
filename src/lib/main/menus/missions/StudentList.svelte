@@ -23,6 +23,7 @@
           <th scope="row">{student.name}</th>
           <td></td>
           <td>{student.rank}</td>
+          <td><input type="checkbox" /></td>
         </tr>
       {/each}
     </tbody>

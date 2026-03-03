@@ -18,11 +18,11 @@
 
 <main>
   <h3>Mission board</h3>
-  <div class="missions-container">
+  <ul class="missions-container">
     {#each $game.missionBoard.missions as mission}
       <Mission {mission} {game} />
     {/each}
-  </div>
+  </ul>
 
   <button type="button" class="button-return" onclick={() => toMainMenu()}>
     Back
@@ -43,10 +43,12 @@
     flex-direction: row;
     gap: 1rem;
     overflow-x: auto;
-    padding-bottom: 0.5rem;
+    padding: 0;
+    padding-bottom: 1rem;
     scroll-behavior: smooth;
     width: 100%;
-    user-select: none;
+    overflow-y: hidden;
+    align-items: stretch;
   }
 
   .missions-container::-webkit-scrollbar {
@@ -75,6 +77,8 @@
   @media (max-width: 500px) {
     .missions-container {
       flex-direction: column;
+      align-items: center;
+      overflow: auto;
     }
   }
 </style>
