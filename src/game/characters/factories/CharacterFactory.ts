@@ -1,4 +1,4 @@
-import type { Character } from "../models/Character";
+import { Character } from "../models/Character";
 import { Rank } from "../models/Rank";
 import Stats from "../models/Stats";
 import type { Trait } from "../models/Trait";
@@ -30,16 +30,14 @@ export default class CharacterFactory {
   private static rng: () => number = Math.random;
 
   static createStudent(): Character {
-    return {
-      id: crypto.randomUUID(),
-      name: this.generateRandomName(),
-      surname: this.generateRandomName(),
-      role: "student",
-      rank: Rank["E"],
-      stats: new Stats(),
-      traits: this.generateInitialTraits(),
-      isOnMission: false,
-    };
+    return new Character(
+      this.generateRandomName(),
+      this.generateRandomName(),
+      "student",
+      Rank["E"],
+      new Stats(),
+      this.generateInitialTraits(),
+    );
   }
 
   static generateInitialTraits(): Trait[] {
