@@ -1,6 +1,5 @@
 <script lang="ts">
   import type Game from "../../../../game/Game";
-  import type GameState from "../../../../game/Game";
   import Mission from "./Mission.svelte";
 
   interface Props {
@@ -10,7 +9,7 @@
   const { game }: Props = $props();
 
   const toMainMenu = () => {
-    game.ui.currentMenu = "main";
+    $game.ui.currentMenu = "main";
     history.pushState("main", "", `/${"main"}`);
     console.log(history);
   };

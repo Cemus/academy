@@ -1,10 +1,8 @@
 <script lang="ts">
   import type { Character } from "../../../../../game/characters/models/Character";
-  import { Rank } from "../../../../../game/characters/models/Rank";
   import type Game from "../../../../../game/Game";
   import type { Mission } from "../../../../../game/missions/models/Mission";
-
-  let dialogElement: HTMLDialogElement;
+  import StudentList from "./StudentList.svelte";
 
   interface Props {
     game: Game;
@@ -12,6 +10,8 @@
   }
 
   const { game, mission }: Props = $props();
+
+  let dialogElement: HTMLDialogElement;
 
   export function open() {
     dialogElement.showModal();
@@ -21,6 +21,8 @@
     sendStudentsList = [];
     dialogElement.close();
   }
+
+  const students = $game.academy.students;
 
   let sendStudentsList: Character[] = $state([]);
 
@@ -35,7 +37,10 @@
     }
   };
 
-  const sendStudents = () => {};
+  const acceptMission = (studentList: Character[]) => {
+    $game.academy.sendStudentsOnMission(studentList, mission);
+    close();
+  };
 </script>
 
 <dialog bind:this={dialogElement} class="mission-dialog">
@@ -62,56 +67,23 @@
     </section>
 
     <section class="students-section">
-      <table>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Stats</th>
-            <th>Rank</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each game.academy.students as student}
-            <tr class:selected={isSelected(student)}>
-              <td class="name-cell">
-                {student.name}
-                {#if student.isOnMission}
-                  <span class="status on-mission">On mission</span>
-                {/if}
-              </td>
-
-              <td>
-                <div class="stats">
-                  <div>
-                    STR <span>{student.stats.str}</span>
-                  </div>
-                  <div>
-                    VIT <span>{student.stats.vit}</span>
-                  </div>
-                </div>
-              </td>
-
-              <td>
-                <span class="rank rank-{Rank[student.rank]}">
-                  {Rank[student.rank]}
-                </span>
-              </td>
-
-              <td>
-                <input
-                  title="Select a student"
-                  name="selectStudent"
-                  type="checkbox"
-                  disabled={student.isOnMission}
-                  checked={isSelected(student)}
-                  onchange={() => toggleStudent(student)}
-                />
-              </td>
+      {#if students.length === 0}
+        <p class="no-student">No students available</p>
+      {:else}
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Stats</th>
+              <th>Rank</th>
+              <th></th>
             </tr>
-          {/each}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <StudentList {students} {isSelected} {toggleStudent} {mission} />
+          </tbody>
+        </table>
+      {/if}
     </section>
 
     <footer class="dialog-footer">
@@ -125,10 +97,10 @@
         <button
           type="button"
           class="primary"
-          onclick={() => sendStudents()}
+          onclick={() => acceptMission(sendStudentsList)}
           disabled={sendStudentsList.length === 0}
         >
-          Send
+          Send on Mission
         </button>
       </div>
     </footer>
@@ -136,6 +108,10 @@
 </dialog>
 
 <style>
+  h4 {
+    padding: 0;
+    margin-top: 0;
+  }
   .mission-dialog {
     width: 800px;
     max-width: 95vw;
@@ -196,67 +172,10 @@
     top: 0;
   }
 
-  th,
-  td {
+  th {
     padding: 10px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #222;
-  }
-
-  tbody tr {
-    transition: background 0.15s ease;
-  }
-
-  tbody tr:hover {
-    background: #1c1c1c;
-  }
-
-  tbody tr.selected {
-    background: #222833;
-  }
-
-  .stats {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 0.9rem;
-  }
-
-  .stats span {
-    font-weight: bold;
-  }
-
-  .rank {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-weight: bold;
-    font-size: 0.85rem;
-  }
-
-  .rank-A {
-    background: #3a7dff;
-  }
-  .rank-B {
-    background: #2e944b;
-  }
-  .rank-C {
-    background: #b58a2a;
-  }
-  .rank-D {
-    background: #8a5a2a;
-  }
-  .rank-E {
-    background: #666;
-  }
-
-  .status {
-    margin-left: 8px;
-    font-size: 0.75rem;
-    opacity: 0.7;
-  }
-
-  .on-mission {
-    color: #f39c12;
   }
 
   .dialog-footer {
@@ -268,10 +187,6 @@
   .actions {
     display: flex;
     gap: 10px;
-  }
-
-  input {
-    cursor: pointer;
   }
 
   button {
@@ -290,5 +205,11 @@
   button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+  }
+
+  .no-student {
+    padding: 1rem;
+    color: rgb(235, 26, 54);
+    text-align: center;
   }
 </style>

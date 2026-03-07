@@ -1,7 +1,6 @@
 <script lang="ts">
   import type Game from "../../../../game/Game";
   import type { Mission } from "../../../../game/missions/models/Mission";
-  import type { RiskInfo } from "../../../../game/missions/models/Risk";
   import Condition from "./condition/Condition.svelte";
   import MissionDialog from "./send/MissionDialog.svelte";
 
@@ -12,7 +11,7 @@
 
   const { mission, game }: Props = $props();
 
-  let dialogRef: MissionDialog;
+  let dialogRef: MissionDialog | null = $state(null);
 
   const riskLevels = [
     { max: 20, label: "Very Low" },
@@ -94,11 +93,13 @@
       disabled={mission.expired}
       onclick={() => dialogRef?.open()}
     >
-      Send students
+      Take Mission
     </button>
   </article>
 </li>
-<MissionDialog bind:this={dialogRef} {game} {mission} />
+{#key $game}
+  <MissionDialog bind:this={dialogRef} {game} {mission} />
+{/key}
 
 <style>
   .container {

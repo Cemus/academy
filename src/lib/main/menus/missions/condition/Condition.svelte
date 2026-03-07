@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { Condition } from "../../../../../game/missions/models/Condition";
+  import { Rank } from "../../../../../game/characters/models/Rank";
+  import type { Condition } from "../../../../../game/missions/models/conditions/Condition";
+  import { HasTraitCondition } from "../../../../../game/missions/models/conditions/HasTraitCondition";
+  import { MaxRankCondition } from "../../../../../game/missions/models/conditions/MaxRankCondition";
+  import { MinRankCondition } from "../../../../../game/missions/models/conditions/MinRankCondition";
 
   interface Props {
     condition: Condition;
@@ -8,28 +12,19 @@
   const { condition }: Props = $props();
 
   const parseCondition = () => {
-    switch (condition.type) {
-      case "hasTrait":
-        return `A student has the trait ${condition.params}`;
-
-      case "maxRank":
-        return `Maximum rank ${condition.params.value}`;
-
-      case "minRank":
-        return `Minimum rank ${condition.params.value}`;
-
-      case "randomChance":
-        return `Random chance ${condition.params}`;
-
-      case "statAbove":
-        return `Stat above ${condition.params}`;
-
-      case "teamSize":
-        return `Strict team size of ${condition.params}`;
-
-      default:
-        return "Unknown condition";
+    if (condition instanceof HasTraitCondition) {
+      return `A student has the trait ${condition.trait}`;
     }
+
+    if (condition instanceof MinRankCondition) {
+      return `Minimum rank ${Rank[condition.minRank]}`;
+    }
+
+    if (condition instanceof MaxRankCondition) {
+      return `Maximum rank ${Rank[condition.maxRank]}`;
+    }
+
+    return "Unknown condition";
   };
 </script>
 
