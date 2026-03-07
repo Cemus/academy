@@ -1,6 +1,8 @@
 import { Rank } from "../../characters/models/Rank";
-import type { Condition } from "../models/Condition";
-import { MissionType, type Mission } from "../models/Mission";
+import type { Condition } from "../models/conditions/Condition";
+import { MaxRankCondition } from "../models/conditions/MaxRankCondition";
+import { MinRankCondition } from "../models/conditions/MinRankCondition";
+import { Mission, MissionType } from "../models/Mission";
 import type { Reward } from "../models/Reward";
 import type { RiskName } from "../models/Risk";
 import RiskFactory from "./RiskFactory";
@@ -68,17 +70,17 @@ export default class MissionFactory {
     const conditions = this.getRandomConditions(type, rank);
     const rewards: Reward[] = this.getRandomRewards(type, rank);
 
-    return {
+    return new Mission(
       name,
-      expiresIn: 1 + Math.floor(Math.random() * 5),
-      duration: 1 + Math.floor(Math.random() * 3),
-      type: type,
-      description: "",
+      1 + Math.floor(Math.random() * 5),
+      1 + Math.floor(Math.random() * 3),
+      type,
+      "",
       risks,
       conditions,
       rewards,
-      expired: false,
-    };
+      false,
+    );
   }
 
   static getRandomMissionType(): MissionType {
@@ -93,10 +95,10 @@ export default class MissionFactory {
   static getRandomConditions(type: MissionType, rank: Rank): Condition[] {
     const conditions: Condition[] = [];
 
-    conditions.push({ type: "minRank", params: { value: Rank[rank] } });
+    conditions.push(new MinRankCondition(rank));
 
     if (Math.random() > 0.9) {
-      conditions.push({ type: "maxRank", params: { value: Rank[rank] } });
+      conditions.push(new MaxRankCondition(rank));
     }
 
     switch (type) {
