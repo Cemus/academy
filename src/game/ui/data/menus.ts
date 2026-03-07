@@ -9,7 +9,12 @@ export interface GameMenu {
 }
 
 export const getMenuItems = (gameState: GameSnapshot): GameMenu[] => [
-  { menu: "missions", text: "Missions", subtitle: "2 en cours", icon: "🗡️" },
+  {
+    menu: "missions",
+    text: "Missions",
+    subtitle: `${gameState.missionBoard.missions.length} missions`,
+    icon: "🗡️",
+  },
   {
     menu: "students",
     text: "Students",
@@ -19,25 +24,25 @@ export const getMenuItems = (gameState: GameSnapshot): GameMenu[] => [
   {
     menu: "academy",
     text: "Academy",
-    subtitle: "Salle de magie rénovée",
+    subtitle: "",
     icon: "🏰",
   },
   {
     menu: "reports",
     text: "Reports",
-    subtitle: "Dernier: Duel épique",
+    subtitle: "",
     icon: "📜",
   },
   {
     menu: "formation",
     text: "Formation",
-    subtitle: "Cours en cours",
+    subtitle: "",
     icon: "📚",
   },
   {
     menu: "options",
     text: "Options",
-    subtitle: "Configurer l’académie",
+    subtitle: "",
     icon: "⚙️",
   },
 ];
