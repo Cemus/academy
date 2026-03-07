@@ -8,6 +8,10 @@ export default class PlayerAcademy {
     CharacterFactory.createStudent(),
     CharacterFactory.createStudent(),
     CharacterFactory.createStudent(),
+    CharacterFactory.createStudent(),
+    CharacterFactory.createStudent(),
+    CharacterFactory.createStudent(),
+    CharacterFactory.createStudent(),
   ];
 
   constructor(emit: () => void) {
@@ -20,6 +24,18 @@ export default class PlayerAcademy {
 
   addStudent(student: Character) {
     this._students.push(student);
+    this.emit();
+  }
+
+  sendStudentsOnMission(students: Character[], mission: Mission) {
+    const ids = new Set(students.map((s) => s.id));
+
+    for (const student of this.students) {
+      if (ids.has(student.id)) {
+        student.currentMission = mission;
+      }
+    }
+
     this.emit();
   }
 }
